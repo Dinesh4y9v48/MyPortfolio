@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // ── API CONFIG ───────────────────────────────────────────────────────────────
 // Change this to your backend URL if not running locally
-const API_BASE = "http://localhost:4000/api";
+const API_BASE =
+  "https://my-portfolio-backend-g7fq.onrender.com/api";
 
 // Helper: maps DB row → frontend shape
 function mapHero(r) {
