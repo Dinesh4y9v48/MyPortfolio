@@ -24,12 +24,10 @@ app.use(express.json({ limit: "50mb" })); // large – allows base64 PDFs/photos
 
 // ── Database connection ────────────────────────────────────────────────────
 const pool = new Pool({
-  host:     process.env.DB_HOST     || "localhost",
-  port:     parseInt(process.env.DB_PORT || "5432"),
-  database: process.env.DB_NAME     || "portfolio",
-  user:     process.env.DB_USER     || "postgres",
-  password: process.env.DB_PASSWORD || "",
-  // ssl: { rejectUnauthorized: false }, // uncomment for cloud-hosted DBs
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 pool.on("error", (err) => {
