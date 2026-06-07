@@ -125,12 +125,25 @@ function Nav({ page, setPage, isAdmin, setShowLogin, onLogout, heroPhoto }) {
     return () => window.removeEventListener("scroll", h);
   }, []);
   const links = ["Hero","About","Skills","Projects","Resume","Contact"];
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 600);
+  };
+
+  window.addEventListener("resize", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+  };
+}, []);
 
   return (
     <>
       <nav style={{
         position:"fixed",top:0,left:0,right:0,zIndex:1000,
-        padding:"0 40px",height:"64px",display:"flex",alignItems:"center",justifyContent:"space-between",
+        padding: isMobile ? "0 16px" : "0 40px",height:"64px",display:"flex",alignItems:"center",justifyContent:"space-between",
         background: scrolled ? "rgba(5,5,10,0.9)" : "transparent",
         backdropFilter: scrolled ? "blur(20px)" : "none",
         borderBottom: scrolled ? "1px solid rgba(96,165,250,0.15)" : "1px solid transparent",
@@ -166,23 +179,90 @@ function Nav({ page, setPage, isAdmin, setShowLogin, onLogout, heroPhoto }) {
               border:"2px solid #050510",zIndex:2,
             }} />
           </div>
-          {/* Name + title */}
-          <div style={{lineHeight:1.2}}>
-            <div style={{
-              fontFamily:"'Manrope',sans-serif",fontWeight:800,fontSize:"0.95rem",
-              background:"linear-gradient(135deg,#fff,#60a5fa)",
-              WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
-              letterSpacing:"-0.01em",
-            }}>Dinesh Yadav</div>
-            <div style={{
-              fontFamily:"'Manrope',sans-serif",fontWeight:500,fontSize:"0.65rem",
-              color:"rgba(255,255,255,0.4)",letterSpacing:"0.06em",textTransform:"uppercase",
-            }}>AI &amp; Software Dev</div>
-          </div>
-        </div>
+          {/* Name + title */}         
+          {!isMobile && (
+            <div style={{lineHeight:1.2}}>
+              <div style={{
+                fontFamily:"'Manrope',sans-serif",
+                fontWeight:800,
+                fontSize:"0.95rem",
+                background:"linear-gradient(135deg,#fff,#60a5fa)",
+                WebkitBackgroundClip:"text",
+                WebkitTextFillColor:"transparent",
+                letterSpacing:"-0.01em",
+              }}>
+                Dinesh Yadav
+              </div>
 
+              <div style={{
+                fontFamily:"'Manrope',sans-serif",
+                fontWeight:500,
+                fontSize:"0.65rem",
+                color:"rgba(255,255,255,0.4)",
+                letterSpacing:"0.06em",
+                textTransform:"uppercase",
+              }}>
+                AI &amp; Software Dev
+              </div>
+            </div>
+          )}
+        </div>
+        {isMobile && (
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              style={{
+                background:"none",
+                border:"none",
+                color:"#fff",
+                fontSize:"28px",
+                cursor:"pointer"
+              }}
+            >
+              ☰
+            </button>
+          )}
+          {isMobile && mobileOpen && (
+  <div
+    style={{
+      position:"absolute",
+      top:"70px",
+      right:"20px",
+      background:"#0b1220",
+      border:"1px solid rgba(255,255,255,0.1)",
+      borderRadius:"12px",
+      padding:"12px",
+      display:"flex",
+      flexDirection:"column",
+      gap:"10px",
+      zIndex:999
+    }}
+  >
+    {links.map((l) => (
+      <button
+        key={l}
+        onClick={() => {
+          setPage(l);
+          setMobileOpen(false);
+        }}
+        style={{
+          background:"none",
+          border:"none",
+          color:"#fff",
+          cursor:"pointer",
+          textAlign:"left"
+        }}
+      >
+        {l}
+      </button>
+    ))}
+  </div>
+)}
         {/* Desktop links */}
-        <div style={{display:"flex",gap:"4px",alignItems:"center"}}>
+        <div style={{
+                  display: isMobile ? "none" : "flex",
+                  gap:"4px",
+                  alignItems:"center"
+                }}>
           {links.map(l => (
             <button key={l} onClick={()=>{setPage(l);setMobileOpen(false);}} style={{
               background: page===l ? "rgba(96,165,250,0.12)" : "none",
@@ -339,12 +419,16 @@ function HeroPage({ data, setPage }) {
     </div>
   );
 }
-
 // ── ABOUT PAGE ─────────────────────────────────────────────────────────────
-function AboutPage({ data }) {
+function AboutPage({ data, isMobile }) {
   return (
     <PageWrapper title="About Me" number="01">
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
+      <div style={{
+          display:"grid",
+          gridTemplateColumns:"1fr",
+          gap:"30px",
+          alignItems:"start"
+        }}>
         <div>
           <p style={{fontSize:"1.05rem",lineHeight:1.8,color:"rgba(255,255,255,0.65)",marginBottom:"20px",fontWeight:400}}>{data.bio}</p>
           <p style={{fontSize:"1.05rem",lineHeight:1.8,color:"rgba(255,255,255,0.65)",fontWeight:400}}>{data.bio2}</p>
@@ -362,12 +446,19 @@ function AboutPage({ data }) {
               ["Languages","Python, Java, JavaScript"],["Availability","Open to Opportunities"],
               ["Email", data.email],["Experience",`${data.experience} Years`],
             ].map(([k,v])=>(
-              <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"center",
-                padding:"16px 0",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
+              <div key={k} style={{
+                    display:"flex",
+                    justifyContent: isMobile ? "flex-start" : "space-between",
+                    alignItems: isMobile ? "flex-start" : "center",
+                    flexDirection: isMobile ? "column" : "row",
+                    gap: isMobile ? "6px" : "0",
+                    padding:"16px 0",
+                    borderBottom:"1px solid rgba(255,255,255,0.06)"
+                  }}>
                 <span style={{fontSize:"0.72rem",letterSpacing:"0.1em",textTransform:"uppercase",
                   color:"rgba(255,255,255,0.3)",fontWeight:600}}>{k}</span>
                 <span style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.8)",fontWeight:500,
-                  textAlign:"right",maxWidth:"60%"}}>{v}</span>
+                  textAlign:isMobile? "left":"right",maxWidth:isMobile?"100%":"60%"}}>{v}</span>
               </div>
             ))}
           </GlassCard>
@@ -505,6 +596,7 @@ function ResumePage({ data }) {
 
 // ── CONTACT PAGE ────────────────────────────────────────────────────────────
 function ContactPage({ data }) {
+  const isMobile = true;
   const [form, setForm] = useState({name:"",email:"",message:""});
   const [sent, setSent] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -552,30 +644,16 @@ function ContactPage({ data }) {
   };
   return (
     <PageWrapper title="Get In Touch" number="05">
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
+      <div style={{
+          display:"grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? "30px" : "60px",
+          alignItems:"start"
+        }}>
         <div>
           <p style={{fontSize:"1.05rem",color:"rgba(255,255,255,0.55)",lineHeight:1.8,marginBottom:"40px"}}>
             Open to freelance projects, full-time roles, and collaborations in AI and software development. Let's build something extraordinary together.
-          </p>
-          <div style={{display:"flex",flexDirection:"column",gap:"0"}}>
-            {[
-              ["📧","Email",data.email],
-              ["💼","LinkedIn",data.linkedin],
-              ["🐙","GitHub",data.github],
-              ["🐦","Twitter",data.twitter],
-              ["📍","Location","India — Remote Worldwide"],
-            ].map(([icon,label,val])=>(
-              <div key={label} style={{display:"flex",gap:"16px",alignItems:"center",
-                padding:"18px 0",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-                <span style={{fontSize:"1.2rem",width:"28px"}}>{icon}</span>
-                <div>
-                  <div style={{fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase",
-                    color:"rgba(96,165,250,0.6)",fontWeight:700,marginBottom:"2px"}}>{label}</div>
-                  <div style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.7)",fontWeight:500}}>{val}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+          </p> 
         </div>
         <GlassCard>
           {sent ? (
@@ -627,6 +705,39 @@ function ContactPage({ data }) {
             </div>
           )}
         </GlassCard>
+          <div
+                style={{
+                  width: "100%",
+                  maxWidth: "700px",
+                  margin: "0 auto"
+                }}
+              >
+            {[             
+                ["📧","Email",data.email],
+                ["💼","LinkedIn",data.linkedin],
+                ["🐙","GitHub",data.github],
+                ["💬","Twitter",data.twitter],
+                ["📍","Location","India — Remote Worldwide"]
+                ].map(([icon,label,val],index)=>(
+              <div
+                    key={label}
+                    style={{
+                      display:"flex",
+                      gap:"16px",
+                      alignItems:"center",
+                      padding:"18px 0",
+                      borderBottom:"1px solid rgba(255,255,255,0.06)",                   
+                    }}
+                  >
+                <span style={{fontSize:"1.2rem",width:"28px"}}>{icon}</span>
+                <div>
+                  <div style={{fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase",
+                    color:"rgba(96,165,250,0.6)",fontWeight:700,marginBottom:"2px"}}>{label}</div>
+                  <div style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.7)",fontWeight:500}}>{val}</div>
+                </div>
+              </div>
+            ))}
+          </div>
       </div>
     </PageWrapper>
   );
@@ -1348,7 +1459,7 @@ export default function App() {
       case "Skills":   return <SkillsPage data={data.skills} />;
       case "Projects": return <ProjectsPage data={data.projects} />;
       case "Resume":   return <ResumePage data={data.resume} />;
-      case "Contact":  return <ContactPage data={data.contact} />;
+      case "Contact": return <ContactPage data={data.contact} />;
       case "admin":    return isAdmin
         ? <AdminPage data={data} setData={setData} reloadData={reloadData} />
         : <HeroPage data={data.hero} setPage={handleSetPage} />;
